@@ -148,23 +148,23 @@
                                     </label>
                                     <div class="col-md-12 d-flex flex-wrap align-items-center" style="padding-left: 20px !important;">
                                         <div class="form-check form-check-inline">
-                                            <input type="radio" name="question_format_type" class="form-check-input quest_text_type" value="1"
-                                                id="ques_default_text" onchange="quesishtml()" checked>
+                                            <input type="radio" name="question_format_type" value="1" ... {{ old('question_format_type', 1) == 1 ? 'checked' : '' }}>
+
                                             <label class="form-check-label pr-3 pl-1 text-dark" for="ques_default_text">Normal text</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input type="radio" name="question_format_type" class="form-check-input quest_text_type" value="2"
-                                                id="ques_html_text" onchange="quesishtml()">
+                                            <i<input type="radio" name="question_format_type" value="2" ... {{ old('question_format_type') == 2 ? 'checked' : '' }}>
+
                                             <label class="form-check-label pr-3 pl-1 text-dark" for="ques_html_text">HTML text</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input type="radio" name="question_format_type" class="form-check-input quest_text_type" value="3"
-                                                id="ques_default_text_3" onchange="quesishtml()">
+                                          <input type="radio" name="question_format_type" value="3" ... {{ old('question_format_type') == 3 ? 'checked' : '' }}>
+
                                             <label class="form-check-label pr-3 pl-1 text-dark" for="ques_default_text_3">Image text</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input type="radio" name="question_format_type" class="form-check-input quest_text_type" value="4"
-                                                id="ques_default_text_4" onchange="quesishtml()">
+                                            <input type="radio" name="question_format_type" value="4" ... {{ old('question_format_type') == 4 ? 'checked' : '' }}>
+
                                             <label class="form-check-label pr-3 pl-1 text-dark" for="ques_default_text_4">Video text</label>
                                         </div>
                                         <span class="text-danger ml-3" id="question_format_type_error"></span>
@@ -285,16 +285,11 @@
                                             of Options<span style="color:red;">&nbsp;*</span></label>
                                     </div>
                                     <div class="col-md-12" style="padding-left: 20px !important;">
-                                        <SELECT name="option_count" id="ppl"
-                                            class="form-control" style="width:100%;" required
-                                            onchange="optionlist()">
-                                            <option disabled="true" selected>Select Option</option>
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
-                                            <option value="5">5</option>
-                                            <option value="6">6</option>
+                                        <select name="option_count" id="ppl" class="form-control" style="width:100%;" required onchange="optionlist()">
+                                            <option disabled {{ old('option_count') ? '' : 'selected' }}>Select Option</option>
+                                            @for ($i = 1; $i <= 6; $i++)
+                                                <option value="{{ $i }}" {{ old('option_count') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                                            @endfor
                                         </select>
                                         <span class="text-danger" id="error_option_count"></span>
                                     </div>
@@ -306,18 +301,17 @@
                                     </label>
                                     <div class="col-md-12 d-flex flex-wrap align-items-center" style="padding-left: 20px !important;">
                                         <div class="form-check form-check-inline">
-                                            <input type="radio" name="option_format_type" class="form-check-input opt_text_type"
-                                                value="0" id="opt_default_text" onchange="optionishtml()" checked>
+                                            <input type="radio" name="option_format_type" value="0" ... {{ old('option_format_type', 0) == 0 ? 'checked' : '' }}>
+
                                             <label class="form-check-label pr-3 pl-1" for="opt_default_text">Normal text</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input type="radio" name="option_format_type" class="form-check-input opt_text_type"
-                                                value="1" id="opt_html_text" onchange="optionishtml()">
+                                            <input type="radio" name="option_format_type" value="1" ... {{ old('option_format_type') == 1 ? 'checked' : '' }}>
+
                                             <label class="form-check-label pr-3 pl-1" for="opt_html_text">HTML text</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input type="radio" name="option_format_type" class="form-check-input opt_text_type"
-                                                value="2" id="opt_file_text" onchange="optionishtml()">
+                                            <input type="radio" name="option_format_type" value="2" ... {{ old('option_format_type') == 2 ? 'checked' : '' }}>
                                             <label class="form-check-label pr-3 pl-1" for="opt_file_text">File Option</label>
                                         </div>
                                         <!-- If needed in future -->
@@ -1207,36 +1201,23 @@
         }
     </script>
     <script>
-        $(document).ready(function() {
-            var check_type_on_load_html = $('input[name="question_format_type"]:checked').val();
-            if (check_type_on_load_html == 1) {
-                $("#showforqueshtml").show();
-                $("#showforquesdefault").hide();
-                $('#showforquesImage').hide();
-                quesishtml();
+        $(document).ready(function () {
+        // question type restore
+        quesishtml();
 
-            } else if (check_type_on_load_html == 2) {
-                $("#showforqueshtml").hide();
-                $("#showforquesdefault").hide();
-                $('#showforquesImage').show();
-            } else {
-                $("#showforqueshtml").hide();
-                $("#showforquesdefault").show();
+        // option count already selected irundha (error-ku apuram reload)
+        var cnt = $('#ppl').val();
+        if (cnt && !isNaN(cnt)) {
+            optionlist();      // selected count ku mattum rows show + answer dropdown build
+            optionishtml();    // selected format (text/html/file) container show
+
+            // answer restore
+            var oldAnswer = "{{ old('quiz_answer') }}";
+            if (oldAnswer) {
+                $('#quiz_answer').val(oldAnswer);
             }
-
-            var check_type_on_load_default = $('input[name="option_format_type"]:checked').val(); //alert(check_type_on_load_default)
-
-            if (check_type_on_load_default == 0) {
-
-                $("#showforoptdefault").show();
-                $("#showforopthtml").hide();
-
-            } else {
-                $("#showforoptdefault").hide();
-                $("#showforopthtml").show();
-                optionishtml();
-            }
-        });
+        }
+    });
 
 
         // Wiris plugin load
